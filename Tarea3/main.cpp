@@ -1,5 +1,4 @@
 #define GLUT_DISABLE_ATEXIT_HACK
-#include <windows.h>
 #include <iostream>
 #include <math.h>
 #include<GL/glut.h>
@@ -16,6 +15,7 @@ using namespace std;
 #define ALPHA 1
 
 #define ECHAP 27
+#define PI 3.14159265359
 
 float w, h;
 
@@ -43,65 +43,45 @@ GLvoid initGL()
 
 float a = 0.0;
 void tetera(){
-	glColor3f(1,0,1);
+	
+	gluPerspective(60.0,1*w/h,1.0,30);
+	glTranslatef(0,0,-30);
+	
+	//glOrtho(-w/32, w/32, -h/32, h/32, -25.0f, 25.0f);
+	glPushMatrix();
+	
+	glColor3f(1,1,1);
 	glTranslatef(4*cos(a),4*sin(a),0);
 	glutSolidTeapot(2.0);
-	a+=0.001;
+	a+=0.03;
+	
+	glPopMatrix();
+	glutSwapBuffers();
+	
+	glFlush();
 }
 	
-	float t = 0.0;
-	float s = 0.0;
-	void sphere(){
-		t+=0.001;
-		s+=0.1;
-		glColor3d(0,0,1);
-		glTranslatef(8*cos(t),0,0);
-		glutSolidSphere(2.0,20,20);
-		glColor3d(1,1,1);
-		glRotatef(s,0,0,1);
-		glTranslatef(10,0,0);
-		glutSolidTeapot(2.0);
-		
-		
-	}
-		
-float d = 0.0;
-float b = 0.0;
-float c = 0.0;
-void system(){
-	b += 0.001;
-	glTranslatef(8*cos(b),0.0,0.0); 
+float t = 0.0;
+void sphere(){
+	t+=0.001;
 	glColor3d(0,0,1);
-	glutSolidSphere(1,20,20);
+	glTranslatef(4*cos(t),4*sin(t),0);
+	glutSolidSphere(2.0,20,20);
 	
-	c += 0.1;
-	glPushMatrix();
-	glColor3d(1,1,1);
-	glRotatef(c,0,0,1);
-	glTranslatef(10,0,0);
-	glutSolidTeapot(2.0);
-	
-	glColor3d(1,1,0);
-	glRotatef(c*3,0,1,0);
-	glTranslatef(5,0,0);
-	//glutSolidTorus(2.0);
-	glutSolidTorus(0.5,1.0,20,20);
-	glPopMatrix();
-	
-	glPushMatrix();
-	glColor3d(1,1,1);
-	glRotatef(c,1,0,0);
-	glTranslatef(0,10,0);
-	glutSolidCube(2.0);
-	glPopMatrix();
-	
-}	
+}
 	
 float f = 0.0;
 float v = 0.0;
 void solar_system(){
-	f+=0.02;
-	v+=0.01;
+	
+	f+=0.2;
+	v+=0.2;
+	
+	gluPerspective(60.0,1*w/h,1.0,50);
+	gluLookAt(0, 0, 50, 0,3*sin(f*PI/180), 0, 0, 1, 0);
+	
+	
+	//glTranslatef(0,0,-50);
 	
 	glPushMatrix();
 	//sol
@@ -110,18 +90,19 @@ void solar_system(){
 	glutSolidSphere(4,8,8);
 	
 	glPushMatrix();
+	
 	//tierra
 	glColor3d(0,0,1);
 	glRotatef(3*v,0,0,1);
-	glTranslatef(10,0,0);
-	glRotatef(f,0,0,1);
+	glTranslatef(10*cos(f*PI/180),10*sin(f*PI/180),0);
+	
 	glutSolidSphere(2,8,8);
+	
+	
 	//luna
 	glColor3d(1,1,1);
 	glRotatef(1.5*v,0,0,1);
-	
-	glTranslatef(4,0,0);
-	glRotatef(2*f,0,0,1);
+	glTranslatef(3*cos(f*PI/180),3*sin(f*PI/180),0);
 	glutSolidSphere(0.5,8,8);
 	glPopMatrix();
 	
@@ -129,12 +110,20 @@ void solar_system(){
 	glPushMatrix();
 	glColor3d(1,0,0);
 	glRotatef(v,0,0,1);
-	glTranslatef(18,0,0);
-	glRotatef(f,0,0,1);
+	glTranslatef(18*cos(f*PI/180),18*sin(f*PI/180),0);
+	
+	
+	
 	glutSolidSphere(1,8,8);
 	glPopMatrix();
 	
 	glPopMatrix();
+	
+	
+	glutSwapBuffers();
+	
+	glFlush();
+	
 }		
 		
 int pos = 0;
@@ -147,30 +136,20 @@ void window_display(){
 	glLoadIdentity();
 
 	
-	gluPerspective(60.0,1*w/h,1.0,30);
-	glTranslatef(0,0,-30);
-	//glOrtho(-w/32, w/32, -h/32, h/32, -25.0f, 25.0f);
-	//tetera();
-	
 	switch(pos){
 		case(1):
 			tetera();
-		break;
+			break;
 		case(2):
-			sphere();
-		break;
-		case(3):
-			system();
-		break;
-		case(4):
 			solar_system();
-		break;
+			break;
 	}
 
-	
+	/*
 	glutSwapBuffers();
 	
 	glFlush();
+	*/
 }
 					
 void window_reshape(GLsizei width, GLsizei height){
@@ -186,32 +165,65 @@ void window_reshape(GLsizei width, GLsizei height){
 	glMatrixMode(GL_MODELVIEW);
 }
 	
+
+void window_key(int key, int x, int y)
+{
+	/*if(key == GLUT_KEY_RIGHT){
+		glutPostRedisplay();
+	}
 	
-	void window_key(int key, int x, int y)
-	{
-		if(key == GLUT_KEY_RIGHT){
-			if(pos<5) pos+=1;
-			else if (pos==5) pos=1;
-			
-			cout<<pos<<endl;
-			window_display();
-		}
+	if(key == GLUT_KEY_LEFT){
+		glutPostRedisplay();
+	}
+	if(key == GLUT_KEY_UP){
+		glutPostRedisplay();
+	}
+	if(key == GLUT_KEY_DOWN){
+		glutPostRedisplay();
+	}
+	if(key == GLUT_KEY_RIGHT){
+		glutPostRedisplay();
+	}*/
+	
+	if(key == GLUT_KEY_F1){
 		
-		if(key == GLUT_KEY_LEFT){
-			if(pos>1) pos-=1;
-			
-			cout<<pos<<endl;
-			window_display();
-		}
+		if(pos>1) pos-=1;
+		
+		cout<<pos<<endl;
+		window_display();
+	}
+	
+	if(key == GLUT_KEY_F2){
+		if(pos<5) pos+=1;
+		else if (pos==5) pos=1;
+		
+		cout<<pos<<endl;
+		window_display();
+		
+		
 		
 	}
+	
+	glutPostRedisplay();	
+	
+}
+GLvoid callback_mouse(int button, int state, int x, int y)
+{
+	if (state == GLUT_DOWN && button == GLUT_LEFT_BUTTON)
+	{
+	}
+}				
 						
-						
-//function called on each frame
+GLvoid callback_motion(int x, int y)
+{
+	
+	glutPostRedisplay();						
+}	
+
 void window_idle(){
 	glutPostRedisplay();
 }
-							
+	
 
 int main(int argc, char **argv)
 {
@@ -220,22 +232,22 @@ int main(int argc, char **argv)
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 	
 	
-	glutInitWindowSize(600, 600);
+	glutInitWindowSize(800, 800);
 	glutInitWindowPosition(0, 0);
-	glutCreateWindow("TP 2 : Transformaciones");
+	glutCreateWindow("TP 3 : ");
 	
 	
 	initGL();
 	//init_scene();
 	
 	glutDisplayFunc(&window_display);
-	
+	glutIdleFunc(&window_idle);
 	glutReshapeFunc(&window_reshape);
 	
 	glutSpecialFunc(window_key);
-	
-	//function called on each frame
-	glutIdleFunc(&window_idle);
+//	glutMouseFunc(&callback_mouse);
+	glutMotionFunc(&callback_motion);
+
 	
 	glutMainLoop();
 	
