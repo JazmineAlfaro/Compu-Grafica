@@ -44,8 +44,10 @@ GLvoid initGL()
 float a = 0.0;
 void tetera(){
 	
-	gluPerspective(60.0,1*w/h,1.0,30);
 	glTranslatef(0,0,-30);
+	
+	/*gluPerspective(60.0,1*w/h,1.0,30);
+	glTranslatef(0,0,-30);*/
 	
 	//glOrtho(-w/32, w/32, -h/32, h/32, -25.0f, 25.0f);
 	glPushMatrix();
@@ -72,16 +74,18 @@ void sphere(){
 	
 float f = 0.0;
 float v = 0.0;
+float centerx = 0.0;
+float centery = 0.0;
 void solar_system(){
 	
 	f+=0.2;
 	v+=0.2;
 	
-	gluPerspective(60.0,1*w/h,1.0,50);
+gluPerspective(60.0,1*w/h,1.0,50);
 	gluLookAt(0, 0, 50, 0,3*sin(f*PI/180), 0, 0, 1, 0);
 	
 	
-	//glTranslatef(0,0,-50);
+	glTranslatef(0,0,-50);
 	
 	glPushMatrix();
 	//sol
@@ -95,7 +99,8 @@ void solar_system(){
 	glColor3d(0,0,1);
 	glRotatef(3*v,0,0,1);
 	glTranslatef(10*cos(f*PI/180),10*sin(f*PI/180),0);
-	
+	centerx = 10*cos(f*PI/180);
+	centery = 10*sin(f*PI/180);
 	glutSolidSphere(2,8,8);
 	
 	
@@ -126,7 +131,7 @@ void solar_system(){
 	
 }		
 		
-int pos = 0;
+int pos = 1;
 void window_display(){
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -135,7 +140,18 @@ void window_display(){
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
+	//glOrtho(-w/32, w/32, -h/32, h/32, -25.0f, 25.0f);
 	
+	if (pos == 1) {
+		gluPerspective(60.0,1*w/h,1.0,50);
+		//gluLookAt(0, 0, 50, 0,3*sin(f*PI/180), 3*cos(f*PI/180), 0, 1, 0);
+	} else {
+		gluPerspective(60.0,1*w/h,1.0,50);
+		gluLookAt(0, 0, 50, centerx,centery, 0, 0, 1, 0);
+	}
+	
+	
+			
 	switch(pos){
 		case(1):
 			tetera();
@@ -253,5 +269,3 @@ int main(int argc, char **argv)
 	
 	return 1;
 }
-
-							
